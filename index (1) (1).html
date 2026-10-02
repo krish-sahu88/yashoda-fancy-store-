@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yashoda Fancy Store | Elegant Gifts & Accessories</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js for 3D Animation Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --primary: #d4af37;
+            --primary-hover: #c59b27;
+            --dark: #0f0f11;
+            --darker: #080809;
+            --card-bg: rgba(20, 20, 25, 0.75);
+            --border: rgba(212, 175, 55, 0.2);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --accent: #e5c158;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Glassmorphism & Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: rgba(8, 8, 9, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary);
+        }
+
+        .nav-btns {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8%;
+            text-align: center;
+            position: relative;
+            margin-top: 60px;
+        }
+
+        .hero-content {
+            max-width: 850px;
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff 30%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Categories Section */
+        .categories {
+            padding: 80px 8%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .section-title p {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+        }
+
+        .cat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 35px 25px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .cat-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        }
+
+        .cat-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .cat-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .cat-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Products Section */
+        .products {
+            padding: 80px 8%;
+            background: rgba(12, 12, 16, 0.5);
+        }
+
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .search-box {
+            position: relative;
+            min-width: 280px;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 10px 15px 10px 40px;
+            border-radius: 25px;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.2);
+        }
+
+        .product-img-container {
+            height: 220px;
+            background: #1a1a22;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img-container img {
+            transform: scale(1.08);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background: var(--primary);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .product-details {
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .product-desc {
+            color: var(--text-muted);
+            font-size: 0.88rem;
+            margin-bottom: 15px;
+            line-height: 1.4;
+            flex-grow: 1;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* WhatsApp Community Callout */
+        .wa-banner {
+            padding: 100px 8%;
+            background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(20, 20, 25, 0.9) 100%);
+            border-top: 1px solid rgba(37, 211, 102, 0.2);
+            border-bottom: 1px solid rgba(37, 211, 102, 0.2);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wa-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #25d366;
+        }
+
+        .wa-banner p {
+            max-width: 600px;
+            margin: 0 auto 30px auto;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: #fff;
+            padding: 14px 32px;
+            font-size: 1.05rem;
+            border-radius: 35px;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background: #20ba5a;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(37, 211, 102, 0.6);
+        }
+
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #141419;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 480px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: var(--primary);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #1a1a22;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.95rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary);
+        }
+
+        /* Admin Dashboard Drawer / Modal */
+        .admin-modal .modal-content {
+            max-width: 900px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #1a1a22;
+            border: 1px solid var(--border);
+            padding: 18px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-card h4 {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-container {
+            overflow-y: auto;
+            flex-grow: 1;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th {
+            background: #1a1a22;
+            color: var(--primary);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover td {
+            background: rgba(212, 175, 55, 0.03);
+        }
+
+        .admin-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 8%;
+            background: var(--dark);
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media(max-width: 768px) {
+            .hero h1 { font-size: 2.6rem; }
+            nav ul { display: none; }
+            header { padding: 15px 5%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Three.js 3D Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="#" class="logo"><i class="fa-solid fa-gem"></i> Yashoda Fancy</a>
+        <nav>
+            <ul>
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#categories">Categories</a></li>
+                <li><a href="#products">Collection</a></li>
+                <li><a href="#community">WhatsApp Group</a></li>
+            </ul>
+        </nav>
+        <div class="nav-btns">
+            <button class="btn btn-outline" onclick="openAdminModal()"><i class="fa-solid fa-lock"></i> Admin</button>
+            <button class="btn btn-primary" onclick="openJoinModal()"><i class="fa-brands fa-whatsapp"></i> Join Group</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Elevate Your Style with Yashoda Fancy Store</h1>
+            <p>Discover exquisite cosmetics, designer gift sets, dazzling accessories, and playful treasures. Join our exclusive WhatsApp community for live updates and instant offers!</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="openJoinModal()"><i class="fa-brands fa-whatsapp"></i> Join WhatsApp Group Now</button>
+                <a href="#products" class="btn btn-outline"><i class="fa-solid fa-bag-shopping"></i> Explore Products</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories">
+        <div class="section-title">
+            <h2>Explore Collections</h2>
+            <p>Handpicked selections curated just for you</p>
+        </div>
+        <div class="cat-grid">
+            <div class="cat-card" onclick="filterByCategory('Cosmetics')">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h3>Cosmetics & Beauty</h3>
+                <p>Glamorous makeup essentials & skincare glow</p>
+            </div>
+            <div class="cat-card" onclick="filterByCategory('Fancy Items')">
+                <i class="fa-solid fa-crown"></i>
+                <h3>Fancy Accessories</h3>
+                <p>Trendy jewelry, hair clips, and statement pieces</p>
+            </div>
+            <div class="cat-card" onclick="filterByCategory('Gift Sets')">
+                <i class="fa-solid fa-gift"></i>
+                <h3>Curated Gift Sets</h3>
+                <p>Perfect hampers for birthdays, weddings & festivals</p>
+            </div>
+            <div class="cat-card" onclick="filterByCategory('Toys')">
+                <i class="fa-solid fa-chess-knight"></i>
+                <h3>Toys & Novelties</h3>
+                <p>Delightful keepsakes and fun collectibles</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Showcase Section -->
+    <section id="products" class="products">
+        <div class="section-title">
+            <h2>Our Featured Products</h2>
+            <p>Browse our best-selling items in-store</p>
+        </div>
+        
+        <div class="filter-bar">
+            <div class="filter-tags">
+                <button class="filter-btn active" onclick="filterByCategory('All')">All Products</button>
+                <button class="filter-btn" onclick="filterByCategory('Cosmetics')">Cosmetics</button>
+                <button class="filter-btn" onclick="filterByCategory('Fancy Items')">Fancy Items</button>
+                <button class="filter-btn" onclick="filterByCategory('Gift Sets')">Gift Sets</button>
+                <button class="filter-btn" onclick="filterByCategory('Toys')">Toys</button>
+            </div>
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search products..." oninput="searchProducts()">
+            </div>
+        </div>
+
+        <div class="product-grid" id="productGrid">
+            <!-- Product Cards Dynamically Injected -->
+        </div>
+    </section>
+
+    <!-- WhatsApp Community Callout -->
+    <section id="community" class="wa-banner">
+        <h2>Join Our VIP WhatsApp Community</h2>
+        <p>Get exclusive early access to fresh stock arrivals, festive discounts, and special gifts directly on your phone.</p>
+        <button class="btn-whatsapp" onclick="openJoinModal()"><i class="fa-brands fa-whatsapp text-xl"></i> Join WhatsApp Group</button>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Yashoda Fancy Store. All rights reserved.</p>
+        <p>Crafted with 3D Elegance & Care</p>
+    </footer>
+
+    <!-- Customer Registration & WhatsApp Join Modal -->
+    <div class="modal" id="joinModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeJoinModal()">&times;</button>
+            <div class="modal-header">
+                <h3>Join VIP WhatsApp Group</h3>
+                <p>Fill in your details to get instant access to our community link</p>
+            </div>
+            <form id="leadForm" onsubmit="handleLeadSubmit(event)">
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" required placeholder="Enter your name">
+                </div>
+                <div class="form-group">
+                    <label for="whatsappNumber">WhatsApp Number</label>
+                    <input type="tel" id="whatsappNumber" required placeholder="e.g., +91 98765 43210">
+                </div>
+                <div class="form-group">
+                    <label for="interestCategory">Primary Interest</label>
+                    <select id="interestCategory">
+                        <option value="Cosmetics">Cosmetics & Beauty</option>
+                        <option value="Fancy Items">Fancy Items & Accessories</option>
+                        <option value="Gift Sets">Gift Sets & Hampers</option>
+                        <option value="Toys">Toys & Novelties</option>
+                        <option value="General">All Store Updates</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; margin-top: 10px;">
+                    <i class="fa-brands fa-whatsapp"></i> Join Group Now
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard Modal -->
+    <div class="modal admin-modal" id="adminModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeAdminModal()">&times;</button>
+            <div class="modal-header" style="text-align: left; margin-bottom: 20px;">
+                <h3>Admin Dashboard</h3>
+                <p>Real-time customer lead tracking and analytics</p>
+            </div>
+            
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h4 id="totalLeadsCount">0</h4>
+                    <p>Total Leads</p>
+                </div>
+                <div class="stat-card">
+                    <h4 id="todayLeadsCount">0</h4>
+                    <p>Joined Today</p>
+                </div>
+                <div class="stat-card">
+                    <h4>4</h4>
+                    <p>Active Categories</p>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>WhatsApp Number</th>
+                            <th>Interest</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadsTableBody">
+                        <!-- Dynamic Leads -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="admin-actions">
+                <button class="btn btn-outline" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Export CSV</button>
+                <button class="btn btn-outline" style="border-color: #ff4d4d; color: #ff4d4d;" onclick="clearLeads()"><i class="fa-solid fa-trash"></i> Clear Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript & Logic -->
+    <script>
+        // Sample Product Database
+        const products = [
+            { id: 1, name: "Matte Velvet Lipstick Kit", category: "Cosmetics", price: "₹499", desc: "Long-lasting vibrant shades with ultra-smooth matte finish.", img: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?auto=format&fit=crop&w=500&q=80", badge: "Bestseller" },
+            { id: 2, name: "Gold-Plated Bridal Necklace Set", category: "Fancy Items", price: "₹1,299", desc: "Exquisite traditional craftsmanship with premium sparkling stones.", img: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=500&q=80", badge: "New" },
+            { id: 3, name: "Luxury Skincare Gift Hamper", category: "Gift Sets", price: "₹999", desc: "Complete herbal glow kit packaged in a gold-trimmed gift box.", img: "https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=500&q=80", badge: "Hot Deal" },
+            { id: 4, name: "Plush Teddy Bear with Gift Box", category: "Toys", price: "₹699", desc: "Super soft cuddly companion accompanied by fragrant rose soaps.", img: "https://images.unsplash.com/photo-1556012018-50fa5c0bce3f?auto=format&fit=crop&w=500&q=80", badge: "Popular" },
+            { id: 5, name: "Professional Makeup Brush 12-pc Set", category: "Cosmetics", price: "₹799", desc: "Silky soft synthetic bristles with ergonomic rose gold handles.", img: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=500&q=80", badge: "Essential" },
+            { id: 6, name: "Crystal Hair Clip & Tiara Collection", category: "Fancy Items", price: "₹349", desc: "Sparkling hair accessories designed for parties and weddings.", img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=500&q=80", badge: "Trending" },
+            { id: 7, name: "Aromatherapy Candle & Spa Gift Set", category: "Gift Sets", price: "₹849", desc: "Soothing lavender and vanilla scented relaxation hamper.", img: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=500&q=80", badge: "Relax" },
+            { id: 8, name: "Interactive Educational Musical Toy", category: "Toys", price: "₹599", desc: "Fun learning toy with lights and melodies for kids.", img: "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?auto=format&fit=crop&w=500&q=80", badge: "Fun" }
+        ];
+
+        // Render Products
+        function renderProducts(items) {
+            const grid = document.getElementById('productGrid');
+            grid.innerHTML = '';
+            if(items.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align:center; color:var(--text-muted); padding: 40px;">No products found.</p>`;
+                return;
+            }
+            items.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-img-container">
+                        <span class="product-badge">${p.badge}</span>
+                        <img src="${p.img}" alt="${p.name}">
+                    </div>
+                    <div class="product-details">
+                        <h3 class="product-title">${p.name}</h3>
+                        <p class="product-desc">${p.desc}</p>
+                        <div class="product-footer">
+                            <span class="product-price">${p.price}</span>
+                            <button class="btn btn-outline" style="padding: 6px 14px; font-size: 0.8rem;" onclick="enquireProduct('${p.name}')">
+                                <i class="fa-brands fa-whatsapp"></i> Enquire
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Filter & Search
+        function filterByCategory(cat) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.includes(cat) || (cat === 'All' && btn.textContent.includes('All')));
+            });
+            if(cat === 'All') {
+                renderProducts(products);
+            } else {
+                const filtered = products.filter(p => p.category === cat);
+                renderProducts(filtered);
+            }
+        }
+
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        function enquireProduct(productName) {
+            const encoded = encodeURIComponent(`Hello Yashoda Fancy Store, I am interested in knowing more about: ${productName}`);
+            // Opens WhatsApp with prefilled message (replace with actual store phone number)
+            window.open(`https://wa.me/919876543210?text=${encoded}`, '_blank');
+        }
+
+        // Modals Control
+        function openJoinModal() {
+            document.getElementById('joinModal').classList.add('active');
+        }
+        function closeJoinModal() {
+            document.getElementById('joinModal').classList.remove('active');
+        }
+        function openAdminModal() {
+            loadLeads();
+            document.getElementById('adminModal').classList.add('active');
+        }
+        function closeAdminModal() {
+            document.getElementById('adminModal').classList.remove('active');
+        }
+
+        // Lead Capture & Admin Dashboard Storage
+        function handleLeadSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('fullName').value;
+            const whatsapp = document.getElementById('whatsappNumber').value;
+            const interest = document.getElementById('interestCategory').value;
+            const timestamp = new Date().toLocaleString();
+
+            const newLead = { name, whatsapp, interest, timestamp };
+            let leads = JSON.parse(localStorage.getItem('yashoda_leads') || '[]');
+            leads.unshift(newLead);
+            localStorage.setItem('yashoda_leads', JSON.stringify(leads));
+
+            alert('Thank you for registering! Redirecting you to our WhatsApp community group...');
+            closeJoinModal();
+            document.getElementById('leadForm').reset();
+
+            // Redirect to WhatsApp Group link (placeholder community link)
+            window.open('https://chat.whatsapp.com/sample-group-invite-link', '_blank');
+        }
+
+        function loadLeads() {
+            const leads = JSON.parse(localStorage.getItem('yashoda_leads') || '[]');
+            document.getElementById('totalLeadsCount').innerText = leads.length;
+            
+            const todayStr = new Date().toLocaleDateString();
+            const todayLeads = leads.filter(l => l.timestamp.includes(todayStr));
+            document.getElementById('todayLeadsCount').innerText = todayLeads.length;
+
+            const tbody = document.getElementById('leadsTableBody');
+            tbody.innerHTML = '';
+            if(leads.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 25px;">No customer leads captured yet.</td></tr>`;
+                return;
+            }
+            leads.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${l.name}</td>
+                    <td><a href="https://wa.me/${l.whatsapp.replace(/[^0-9]/g, '')}" target="_blank" style="color: #25d366; text-decoration: none;"><i class="fa-brands fa-whatsapp"></i> ${l.whatsapp}</a></td>
+                    <td><span style="background: rgba(212,175,55,0.1); color: var(--primary); padding: 3px 10px; border-radius: 12px; font-size: 0.8rem;">${l.interest}</span></td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">${l.timestamp}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function clearLeads() {
+            if(confirm('Are you sure you want to clear all customer lead data?')) {
+                localStorage.removeItem('yashoda_leads');
+                loadLeads();
+            }
+        }
+
+        function exportCSV() {
+            const leads = JSON.parse(localStorage.getItem('yashoda_leads') || '[]');
+            if(leads.length === 0) {
+                alert('No data available to export.');
+                return;
+            }
+            let csvContent = "data:text/csv;charset=utf-8,Name,WhatsApp,Interest,Timestamp\n";
+            leads.forEach(l => {
+                csvContent += `"${l.name}","${l.whatsapp}","${l.interest}","${l.timestamp}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "yashoda_fancy_store_leads.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Three.js 3D Background Particles & Animation
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Create Golden Particles
+        const particlesCount = 700;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 15;
+        }
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.025,
+            color: 0xd4af37,
+            transparent: true,
+            opacity: 0.75,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 4;
+
+        // Mouse movement effect
+        let mouseX = 0;
+        let mouseY = 0;
+        window.addEventListener('mousemove', (event) => {
+            mouseX = event.clientX / window.innerWidth - 0.5;
+            mouseY = event.clientY / window.innerHeight - 0.5;
+        });
+
+        // Animation Loop
+        const clock = new THREE.Clock();
+        function animate() {
+            requestAnimationFrame(animate);
+            const elapsedTime = clock.getElapsedTime();
+
+            particlesMesh.rotation.y = elapsedTime * 0.05 + mouseX * 0.3;
+            particlesMesh.rotation.x = elapsedTime * 0.03 + mouseY * 0.3;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initial render
+        renderProducts(products);
+    </script>
+</body>
+</html>
